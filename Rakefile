@@ -5,7 +5,7 @@ def build
 end
 
 desc "Build Spader"
-task :dist do
+task :dist => :clean do
   puts "Building Spader..."
   build.invoke
   puts "Done"
