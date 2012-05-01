@@ -28,6 +28,7 @@ PLATFORMS
 
 DEPENDENCIES
   multi_json
+  rack
   rake-pipeline!
   rake-pipeline-web-filters!
   tilt
