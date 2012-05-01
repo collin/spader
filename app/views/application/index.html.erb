@@ -1,0 +1,7 @@
+<ul>
+<% for path in Dir["sources/*.js"].sort %>
+  <li>
+    <a href="<%= path.sub("sources/", "") %>"><%= path.sub("sources/", "") %></a>
+  </li>
+<% end %>
+</ul>
