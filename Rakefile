@@ -17,3 +17,11 @@ task :clean do
   build.clean
   puts "Done"
 end
+
+desc "commit and push to heroku"
+task :push => :dist do
+  system "git add -u"
+  system "git commit -m 'added new packages'"
+  system "git push origin master"
+  system "git push heroku master"
+end
