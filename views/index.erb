@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Spader</title>
+  <link rel="stylesheet" href="/css/application.css">
+</head>
+<body>
+<h1>SPADER: get your js wrapped in minispade.</h1>
+
+<ul>
+<% for path in Dir["sources/*.js"].sort %>
+  <li>
+    <a href="<%= path.sub("sources/", "spades/") %>"><%= path.sub("sources/", "") %></a>
+  </li>
+<% end %>
+</ul>
+
+<img id="spader" src="/images/JAMESSPADER.jpg" />
+</body>
+</html>

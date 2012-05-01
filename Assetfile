@@ -1,4 +1,5 @@
 require "rake-pipeline-web-filters"
+require "json"
 
 output "public/spades"
 
@@ -11,5 +12,12 @@ input "sources" do
       id.sub!(/\/main$/, '')
       id
     }
+  end
+end
+
+output "public"
+input "views" do
+  match "index.erb"  do
+    tilt { "index.html" }
   end
 end
