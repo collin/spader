@@ -5,12 +5,13 @@
   * MIT License
   */
   
-!function (name, definition) {
-  if (typeof module != 'undefined') module.exports = definition()
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-  else this[name] = definition()
-}('fleck', function () {
-  
+// !function (name, definition) {
+//   if (typeof module != 'undefined') module.exports = definition()
+//   else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+//   else this[name] = definition()
+// }('fleck', function () {
+
+window.fleck = (function() {
   var lib = {
     // plural rules, singular rules, and starting uncountables
     // from http://code.google.com/p/inflection-js/
@@ -206,4 +207,4 @@
   
   return lib;
   
-});
+}).call(this);
