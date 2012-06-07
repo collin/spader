@@ -1,5 +1,5 @@
 (function() {
-  var BCSocket, Connection, Doc, MicroEvent, SockJS, append, bootstrapTransform, checkValidComponent, checkValidOp, exports, hasBCSocket, hasSockJS, invertComponent, nextTick, strInject, text, transformComponent, transformPosition, types, useSockJS,
+  var BCSocket, Connection, Doc, MicroEvent, append, bootstrapTransform, checkValidComponent, checkValidOp, exports, invertComponent, nextTick, strInject, text, transformComponent, transformPosition, types,
     __slice = Array.prototype.slice,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -701,8 +701,11 @@
   exports.Doc = Doc;
 
   if (typeof WEB !== "undefined" && WEB !== null) {
-    types = exports.types;
-    BCSocket = window.BCSocket, SockJS = window.SockJS;
+    types || (types = exports.types);
+    if (!window.BCSocket) {
+      throw new Error('Must load browserchannel before this library');
+    }
+    BCSocket = window.BCSocket;
   } else {
     types = require('../types');
     BCSocket = require('browserchannel').BCSocket;
@@ -715,14 +718,11 @@
       var _this = this;
       this.docs = {};
       this.state = 'connecting';
-      this.socket = typeof useSockJS !== "undefined" && useSockJS !== null ? new SockJS(host) : new BCSocket(host, {
+      this.socket = new BCSocket(host, {
         reconnect: true
       });
       this.socket.onmessage = function(msg) {
         var docName;
-        if (typeof useSockJS !== "undefined" && useSockJS !== null) {
-          msg = JSON.parse(msg.data);
-        }
         if (msg.auth === null) {
           _this.lastError = msg.error;
           _this.disconnect();
@@ -786,9 +786,6 @@
       } else {
         this.lastSentDoc = docName;
       }
-      if (typeof useSockJS !== "undefined" && useSockJS !== null) {
-        data = JSON.stringify(data);
-      }
       return this.socket.send(data);
     };
 
@@ -818,12 +815,6 @@
     Connection.prototype.open = function(docName, type, callback) {
       var doc;
       if (this.state === 'stopped') return callback('connection closed');
-      if (this.state === 'connecting') {
-        this.on('handshaking', function() {
-          return this.open(docName, type, callback);
-        });
-        return;
-      }
       if (typeof type === 'function') {
         callback = type;
         type = 'text';
@@ -861,14 +852,7 @@
 
   exports.Connection = Connection;
 
-  if (typeof WEB !== "undefined" && WEB !== null) {
-    hasBCSocket = window.BCSocket !== void 0;
-    hasSockJS = window.SockJS !== void 0;
-    if (!(hasBCSocket || hasSockJS)) {
-      throw new Error('Must load socks or browserchannel before this library');
-    }
-    useSockJS = hasSockJS && !hasBCSocket;
-  } else {
+  if (typeof WEB === "undefined" || WEB === null) {
     Connection = require('./connection').Connection;
   }
 
@@ -876,12 +860,11 @@
     var connections, getConnection, maybeClose;
     connections = {};
     getConnection = function(origin) {
-      var c, del, location, path;
+      var c, del, location;
       if (typeof WEB !== "undefined" && WEB !== null) {
         location = window.location;
-        path = useSockJS ? 'sockjs' : 'channel';
         if (origin == null) {
-          origin = "" + location.protocol + "//" + location.host + "/" + path;
+          origin = "" + location.protocol + "//" + location.host + "/channel";
         }
       }
       if (!connections[origin]) {
